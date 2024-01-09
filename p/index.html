@@ -1,7 +1,811 @@
-<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="This is a test page "><title></title>
-<link rel=canonical href=https://pypotato.github.io/p/><link rel=stylesheet href=/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css><meta property="og:title" content><meta property="og:description" content="This is a test page "><meta property="og:url" content="https://pypotato.github.io/p/"><meta property="og:site_name" content="演示站点"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta name=twitter:title content><meta name=twitter:description content="This is a test page "></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
+<!doctype html><html lang=zh-cn dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="《Kubernetes 源码剖析》笔记 Kubernetes 版本：1.14 第 5 章：client-go 编程式交互 Client 客户端对象 client-go 支持 4 种 Client 客户端对象来与 Kubernetes API Server 交互： 其"><title></title>
+<link rel=canonical href=https://pypotato.github.io/p/><link rel=stylesheet href=/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css><meta property="og:title" content><meta property="og:description" content="《Kubernetes 源码剖析》笔记 Kubernetes 版本：1.14 第 5 章：client-go 编程式交互 Client 客户端对象 client-go 支持 4 种 Client 客户端对象来与 Kubernetes API Server 交互： 其"><meta property="og:url" content="https://pypotato.github.io/p/"><meta property="og:site_name" content="演示站点"><meta property="og:type" content="article"><meta property="article:section" content="Post"><meta name=twitter:title content><meta name=twitter:description content="《Kubernetes 源码剖析》笔记 Kubernetes 版本：1.14 第 5 章：client-go 编程式交互 Client 客户端对象 client-go 支持 4 种 Client 客户端对象来与 Kubernetes API Server 交互： 其"></head><body class=article-page><script>(function(){const e="StackColorScheme";localStorage.getItem(e)||localStorage.setItem(e,"auto")})()</script><script>(function(){const t="StackColorScheme",e=localStorage.getItem(t),n=window.matchMedia("(prefers-color-scheme: dark)").matches===!0;e=="dark"||e==="auto"&&n?document.documentElement.dataset.scheme="dark":document.documentElement.dataset.scheme="light"})()</script><div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky"><button class="hamburger hamburger--spin" type=button id=toggle-menu aria-label=切换菜单>
 <span class=hamburger-box><span class=hamburger-inner></span></span></button><header><figure class=site-avatar><a href=/><img src=/img/avatar_huda2458f72ce188392d75c5d51cd8e24e_373_300x0_resize_box_3.png width=300 height=300 class=site-logo loading=lazy alt=Avatar>
-</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>演示站点</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=social-menu><li><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com target=_blank title=Twitter rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>主页</span></a></li><li><a href=/%E5%85%B3%E4%BA%8E/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg><span>关于</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>Links</span></a></li><div class=menu-bottom-section><li id=i18n-switch><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg><select name=language onchange="window.location.href=this.selectedOptions[0].value"><option value=https://pypotato.github.io/en/>English</option><option value=https://pypotato.github.io/ selected>中文</option></select></li><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><div class=article-title-wrapper><h2 class=article-title><a href=/p/></a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 1 分钟</time></div></footer></div></header><section class=article-content><h1 id=this-is-a-test-page>This is a test page</h1></section><footer class=article-footer><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
+</a><span class=emoji>🍥</span></figure><div class=site-meta><h1 class=site-name><a href=/>演示站点</a></h1><h2 class=site-description>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</h2></div></header><ol class=social-menu><li><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank title=GitHub rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 19c-4.3 1.4-4.3-2.5-6-3m12 5v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6.0 00-1.3-3.2 4.2 4.2.0 00-.1-3.2s-1.1-.3-3.5 1.3a12.3 12.3.0 00-6.2.0C6.5 2.8 5.4 3.1 5.4 3.1a4.2 4.2.0 00-.1 3.2A4.6 4.6.0 004 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg></a></li><li><a href=https://twitter.com target=_blank title=Twitter rel=me><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84.0 00.497-3.753C20.18 7.773 21.692 5.25 22 4.009z"/></svg></a></li></ol><ol class=menu id=main-menu><li><a href=/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><polyline points="5 12 3 12 12 3 21 12 19 12"/><path d="M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/><path d="M9 21v-6a2 2 0 012-2h2a2 2 0 012 2v6"/></svg><span>主页</span></a></li><li><a href=/%E5%85%B3%E4%BA%8E/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg><span>关于</span></a></li><li><a href=/archives/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><rect x="3" y="4" width="18" height="4" rx="2"/><path d="M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8"/><line x1="10" y1="12" x2="14" y2="12"/></svg><span>Archives</span></a></li><li><a href=/search/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg><span>Search</span></a></li><li><a href=/links/><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><path d="M10 14a3.5 3.5.0 005 0l4-4a3.5 3.5.0 00-5-5l-.5.5"/><path d="M14 10a3.5 3.5.0 00-5 0l-4 4a3.5 3.5.0 005 5l.5-.5"/></svg><span>Links</span></a></li><div class=menu-bottom-section><li id=i18n-switch><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 5h7"/><path d="M9 3v2c0 4.418-2.239 8-5 8"/><path d="M5 9c-.003 2.144 2.952 3.908 6.7 4"/><path d="M12 20l4-9 4 9"/><path d="M19.1 18h-6.2"/></svg><select name=language onchange="window.location.href=this.selectedOptions[0].value"><option value=https://pypotato.github.io/en/>English</option><option value=https://pypotato.github.io/ selected>中文</option></select></li><li id=dark-mode-toggle><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="8" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="16" cy="12" r="2"/><rect x="2" y="6" width="20" height="12" rx="6"/></svg><span>暗色模式</span></li></div></ol></aside><aside class="sidebar right-sidebar sticky"><section class="widget archives"><div class=widget-icon><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><line x1="11" y1="4" x2="7" y2="20"/><line x1="17" y1="4" x2="13" y2="20"/></svg></div><h2 class="widget-title section-title">目录</h2><div class=widget--toc><nav id=TableOfContents><ol><li><a href=#第-5-章client-go-编程式交互>第 5 章：client-go 编程式交互</a><ol><li><a href=#client-客户端对象>Client 客户端对象</a><ol><li><a href=#kubeconfig-配置管理>kubeconfig 配置管理</a></li><li><a href=#restclient-客户端>RESTClient 客户端</a></li><li><a href=#clientset-客户端>ClientSet 客户端</a></li><li><a href=#dynamicclient-客户端>DynamicClient 客户端</a></li><li><a href=#discoveryclient-客户端>DiscoveryClient 客户端</a></li></ol></li><li><a href=#informer-机制>Informer 机制</a><ol><li><a href=#informer-机制架构设计>Informer 机制架构设计</a></li><li><a href=#reflector>Reflector</a></li><li><a href=#deltafifo>DeltaFIFO</a></li><li><a href=#indexer>Indexer</a></li></ol></li><li><a href=#workqueue>WorkQueue</a><ol><li><a href=#fifo-队列>FIFO 队列</a></li><li><a href=#延迟队列>延迟队列</a></li><li><a href=#限速队列>限速队列</a></li></ol></li><li><a href=#eventbroadcaster-事件管理器>EventBroadcaster 事件管理器</a></li></ol></li></ol></nav></div></section></aside><main class="main full-width"><article class=main-article><header class=article-header><div class=article-details><div class=article-title-wrapper><h2 class=article-title><a href=/p/></a></h2></div><footer class=article-time><div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg><time class=article-time--reading>阅读时长: 1 分钟</time></div></footer></div></header><section class=article-content><h1 id=kubernetes-源码剖析笔记>《Kubernetes 源码剖析》笔记</h1><p>Kubernetes 版本：1.14</p><h2 id=第-5-章client-go-编程式交互>第 5 章：client-go 编程式交互</h2><h3 id=client-客户端对象>Client 客户端对象</h3><p>client-go 支持 4 种 Client 客户端对象来与 Kubernetes API Server 交互：</p><p><img src=/images/Client.png loading=lazy alt=pic></p><p>其中 RESTClient 是最基础的客户端。RESTClient 对 HTTP Request 进行了封装，实现了 RESTful 风格的 API。其他三种客户端都是基于 RESTClient 实现的。</p><ul><li><strong>Clientset</strong>： 是多个 Client 客户端的集合，<strong>只能处理 K8s 内置资源</strong>。</li><li><strong>dynamicClient</strong>： 动态客户端，<strong>可以操作任意 k8s 资源，包括CRD资源</strong>。</li></ul><h4 id=kubeconfig-配置管理>kubeconfig 配置管理</h4><p>kubeconfig 用于管理访问 kube-apiserver 的配置信息，同时它还<strong>支持访问多 kube-apiserver的配置管理</strong>，Kubernetes 的其他组件都使用 kubeconfig 配置信息来连接 kube-apiserver 组件。</p><p>kubeconfig 种存储了集群、用户、命名空间和身份验证等信息，他通常包含 3 部分：</p><ul><li><strong>clusters</strong>：定义集群信息，如 kube-apiserver 的服务地址及集群的证书信息等。</li><li><strong>users</strong>：定义了集群用户身份验证的客户端凭据。</li><li><strong>contexts</strong>：定义集群用户信息和命名空间等，用于将请求发送到指定的集群。</li></ul><p>client-go 会读取 kubeconfig 配置信息，并生成 config 对象，用于与 kube-apiserver 通信。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>config</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>clientcmd</span><span class=p>.</span><span class=nf>BuildConfigFromFlag</span><span class=p>(</span><span class=s>&#34;&#34;</span><span class=p>,</span> <span class=nx>clientcmd</span><span class=p>.</span><span class=nx>RecommendedHomeFile</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=restclient-客户端>RESTClient 客户端</h4><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>restClient</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rest</span><span class=p>.</span><span class=nf>RESTClientFor</span><span class=p>(</span><span class=nx>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>result</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>corev1</span><span class=p>.</span><span class=nx>PodList</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>err</span> <span class=p>=</span> <span class=nx>restClient</span><span class=p>.</span><span class=nf>Get</span><span class=p>().</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Namespace</span><span class=p>(</span><span class=s>&#34;default&#34;</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Resource</span><span class=p>(</span><span class=s>&#34;pods&#34;</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>VersionedParams</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>ListOptions</span><span class=p>{</span><span class=nx>limit</span><span class=p>:</span><span class=mi>500</span><span class=p>},</span><span class=nx>scheme</span><span class=p>.</span><span class=nx>ParameterCodec</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Do</span><span class=p>().</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Into</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>上面的代码用 config 对象实例化了 RESTClient 对象，进而构建 HTTP 请求参数。RESTClient 发送请求的过程对 Go 语言标准库 net/http 进行了封装，由 Do 函数实现：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// file: staging/src/k8s.io/client-go/rest/request.go
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>Request</span><span class=p>)</span> <span class=nf>Do</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>)</span> <span class=nx>Result</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=kd>var</span> <span class=nx>result</span> <span class=nx>Result</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>request</span><span class=p>(</span><span class=nx>ctx</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>req</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Request</span><span class=p>,</span> <span class=nx>resp</span> <span class=o>*</span><span class=nx>http</span><span class=p>.</span><span class=nx>Response</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>result</span> <span class=p>=</span> <span class=nx>r</span><span class=p>.</span><span class=nf>transformResponse</span><span class=p>(</span><span class=nx>resp</span><span class=p>,</span> <span class=nx>req</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=p>})</span>
+</span></span><span class=line><span class=cl>	<span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=clientset-客户端>ClientSet 客户端</h4><p>RESTClient 作为一种最基础的客户端，在使用的时候需要指定 Resource 和 Version 等信息，编码时需要提前知道 Resource 所在的 Group 和对应的 Version 信息（具体实践可以在 <a class=link href="https://www.bilibili.com/video/BV1uS4y1V7iZ/?spm_id_from=333.788&amp;vd_source=cecd7267d218709c07ce8584d7134038" target=_blank rel=noopener>b 站视频</a> 中看到）。</p><p><img src=/images/restclient-gv.png loading=lazy alt="Alt text"></p><p>与之相比，ClientSet 使用起来更加便捷，它<strong>在 RESTClient 的基础上封装了对 Resource 和 Version 的管理方法</strong>。</p><p>每一个 Resource 可以理解为一个客户端，而 ClientSet 是多个客户端的集合，每一个 Resource 和 Version 都以函数的方式暴露给开发者。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>clientSet</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>kubernetes</span><span class=p>.</span><span class=nf>NewForConfig</span><span class=p>(</span><span class=nx>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 每一个 Resource 和 Version 都以函数的方式暴露给开发者
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>podClient</span> <span class=o>:=</span> <span class=nx>clientSet</span><span class=p>.</span><span class=nf>CoreV1</span><span class=p>().</span><span class=nf>Pods</span><span class=p>(</span><span class=nx>apiv1</span><span class=p>.</span><span class=nx>NamespaceDefault</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>list</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>podClient</span><span class=p>.</span><span class=nf>List</span><span class=p>(</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>ListOptions</span><span class=p>{</span><span class=nx>limit</span><span class=p>:</span><span class=mi>500</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>对 Pod 资源对象执行 List 操作实际上是对 RESTClient 进行了封装：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// file: staging/src/k8s.io/client-go/kubernetes/typed/core/v1/pod.go
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>pods</span><span class=p>)</span> <span class=nf>List</span><span class=p>(</span><span class=nx>ctx</span> <span class=nx>context</span><span class=p>.</span><span class=nx>Context</span><span class=p>,</span> <span class=nx>opts</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>ListOptions</span><span class=p>)</span> <span class=p>(</span><span class=nx>result</span> <span class=o>*</span><span class=nx>v1</span><span class=p>.</span><span class=nx>PodList</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=o>...</span>
+</span></span><span class=line><span class=cl>	<span class=nx>result</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>v1</span><span class=p>.</span><span class=nx>PodList</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>	<span class=nx>err</span> <span class=p>=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>client</span><span class=p>.</span><span class=nf>Get</span><span class=p>().</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Namespace</span><span class=p>(</span><span class=nx>c</span><span class=p>.</span><span class=nx>ns</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Resource</span><span class=p>(</span><span class=s>&#34;pods&#34;</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>VersionedParams</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>opts</span><span class=p>,</span> <span class=nx>scheme</span><span class=p>.</span><span class=nx>ParameterCodec</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Timeout</span><span class=p>(</span><span class=nx>timeout</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Do</span><span class=p>(</span><span class=nx>ctx</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>		<span class=nf>Into</span><span class=p>(</span><span class=nx>result</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>return</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=dynamicclient-客户端>DynamicClient 客户端</h4><p>DynamicClient 和 ClientSet 类似，也是对 RESTClient 的封装，不过它不仅可以对 Kubernetes 内置资源操作，还能对 CRD 操作。</p><p>这是因为，ClientSet 需要预先实现每种 Resource 和 Version 的操作，其内部的数据都是结构化数据。而 DynamicClient 内部实现了 Unstructured，这使它能够处理用户自定义资源（无法提前预知数据结构）。</p><blockquote><p>DynamicClient 不是类型安全的，因此在访问 CRD 自定义资源时需要特别注意。例如，在操作指针不当的情况下会导致程序崩溃。</p></blockquote><p>ClientSet 用于操作 Kubernetes 中的内建资源。这些内建资源都有严格的 API 规范，包括每个资源的字段类型和结构，在使用 clientset 时，开发人员只能操作这些已知的资源，并且这些资源的结构在编译时就已经确定了。因此不太可能出现类型不匹配的问题。而对于可以操作自定义资源的 DynamicClient，则不一定：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// 建立到 Kubernetes 集群的连接
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>config</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>rest</span><span class=p>.</span><span class=nf>InClusterConfig</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 处理错误
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;Failed to get in-cluster config: %v\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 创建一个 DynamicClient
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>dynamicClient</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>dynamic</span><span class=p>.</span><span class=nf>NewForConfig</span><span class=p>(</span><span class=nx>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 处理错误
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;Failed to create DynamicClient: %v\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 定义自定义资源对象的 GVK（Group-Version-Kind）
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>gvk</span> <span class=o>:=</span> <span class=nx>schema</span><span class=p>.</span><span class=nx>GroupVersionKind</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Group</span><span class=p>:</span>   <span class=s>&#34;example.com&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Version</span><span class=p>:</span> <span class=s>&#34;v1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Kind</span><span class=p>:</span>    <span class=s>&#34;CustomResource&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 创建一个自定义资源对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>resource</span> <span class=o>:=</span> <span class=nx>schema</span><span class=p>.</span><span class=nx>GroupVersionResource</span><span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Group</span><span class=p>:</span>    <span class=s>&#34;example.com&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Version</span><span class=p>:</span>  <span class=s>&#34;v1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=nx>Resource</span><span class=p>:</span> <span class=s>&#34;customresources&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 创建一个错误的 CustomResource 实例，没有设置 spec 字段
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>obj</span> <span class=o>:=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;apiVersion&#34;</span><span class=p>:</span> <span class=s>&#34;example.com/v1&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;kind&#34;</span><span class=p>:</span>       <span class=s>&#34;CustomResource&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;metadata&#34;</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;name&#34;</span><span class=p>:</span> <span class=s>&#34;example-cr&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>		<span class=s>&#34;status&#34;</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kd>interface</span><span class=p>{}{</span>
+</span></span><span class=line><span class=cl>			<span class=s>&#34;field&#34;</span><span class=p>:</span> <span class=s>&#34;value&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>		<span class=p>},</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>	<span class=c1>// 在对象上调用 Create 方法，这可能导致类型不安全而崩溃
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=p>=</span> <span class=nx>dynamicClient</span><span class=p>.</span><span class=nf>Resource</span><span class=p>(</span><span class=nx>resource</span><span class=p>).</span><span class=nf>Namespace</span><span class=p>(</span><span class=s>&#34;default&#34;</span><span class=p>).</span><span class=nf>Create</span><span class=p>(</span><span class=nx>context</span><span class=p>.</span><span class=nf>TODO</span><span class=p>(),</span> <span class=nx>obj</span><span class=p>,</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>CreateOptions</span><span class=p>{})</span>
+</span></span><span class=line><span class=cl>	<span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>		<span class=c1>// 处理错误
+</span></span></span><span class=line><span class=cl><span class=c1></span>		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Fprintf</span><span class=p>(</span><span class=nx>os</span><span class=p>.</span><span class=nx>Stderr</span><span class=p>,</span> <span class=s>&#34;Failed to create custom resource: %v\n&#34;</span><span class=p>,</span> <span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>		<span class=k>return</span>
+</span></span><span class=line><span class=cl>	<span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>DynamicClient 的处理过程将 Resource（如 PodList）转换成 Unstructured 结构类型，处理完成后，再将 unstructured 转换成 PodList。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>dynamicClient</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>dynamic</span><span class=p>.</span><span class=nf>NewForConfig</span><span class=p>(</span><span class=nx>config</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>gvr</span> <span class=o>:=</span> <span class=nx>schema</span><span class=p>.</span><span class=nx>GroupVersionResource</span><span class=p>{</span><span class=nx>Version</span><span class=p>:</span> <span class=s>&#34;v1&#34;</span><span class=p>,</span> <span class=nx>Resource</span><span class=p>:</span> <span class=s>&#34;pods&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>unstructObj</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>dynamicClient</span><span class=p>.</span><span class=nf>Resource</span><span class=p>(</span><span class=nx>gvr</span><span class=p>).</span>    <span class=c1>// 设置资源组、资源版本、资源名称
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nf>Namespace</span><span class=p>(</span><span class=nx>apiv1</span><span class=p>.</span><span class=nx>NamespaceDefault</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>List</span><span class=p>(</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>ListOptions</span><span class=p>{</span><span class=nx>limit</span><span class=p>:</span> <span class=mi>500</span><span class=p>})</span>    <span class=c1>// 得到的 Pod 列表为 unstructured.UnstructuredList 指针类型
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=nx>podList</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>corev1</span><span class=p>.</span><span class=nx>PodList</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>err</span> <span class=p>=</span> <span class=nx>runtime</span><span class=p>.</span><span class=nx>DefaultUnstructuredConvert</span><span class=p>.</span><span class=nf>FromUnstructured</span><span class=p>(</span><span class=nx>unstructObj</span><span class=p>.</span><span class=nf>UnstructuredContent</span><span class=p>(),</span> <span class=nx>podList</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h4 id=discoveryclient-客户端>DiscoveryClient 客户端</h4><p>DiscoveryClient 是发现客户端，它主要用于发现 Kubernetes API Server 所支持的资源组、资源版本、资源信息。Kubernetes API Server 支持很多资源组、资源版本、资源信息，开发者在开发过程中很难记住所有信息，此时可以通过 DiscoveryClient 查看所支持的资源组、资源版本、资源信息。</p><p>DiscoveryClient 除了可以发现 Kubernetes API Server 所支持的资源组、资源版本、资源信息，还可以将这些信息存储到本地，用于本地缓存（Cache），以减轻对 Kubernetes API Server 访问的压力。</p><h3 id=informer-机制>Informer 机制</h3><p>Kubernetes 各个组件都是通过 REST API跟API Server 交互通信的，而如果每次每一个组件都直接跟 API Server 交互去读取/写入到后端的 etcd 的话，会对 API Server 以及 etcd 造成非常大的负担。而 Informer 机制是为了保证各个组件之间通信的实时性、可靠性，并且减缓对 API Server和etcd 的负担。</p><h4 id=informer-机制架构设计>Informer 机制架构设计</h4><p><img src=/images/informer%e6%9e%b6%e6%9e%84.png loading=lazy></p><p>每一个 Kubernetes 资源上都实现了 Informer 机制。每一个 Informer 上都会实现 <code>Informer</code> 和 <code>Lister</code> 方法，定义不同资源的 Informer 可以监控不同资源的资源事件：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>podInformer</span> <span class=o>:=</span> <span class=nx>sharedInformer</span><span class=p>.</span><span class=nf>Core</span><span class=p>().</span><span class=nf>V1</span><span class=p>().</span><span class=nf>Pods</span><span class=p>().</span><span class=nf>Informer</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=nx>nodeInformer</span> <span class=o>:=</span> <span class=nx>sharedInformer</span><span class=p>.</span><span class=nf>Node</span><span class=p>().</span><span class=nf>V1beta1</span><span class=p>().</span><span class=nf>RuntimeClasses</span><span class=p>().</span><span class=nf>Informer</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><p>Informer 也称作 Shared Informer，它是可以共享使用的。如果同一资源的 informer 被多次实例化，且每个 Informer 都读独立使用一个 Reflector，那么会运行过多相同的 ListAndWatch，导致 API Server <strong>负载过重</strong>。</p><p>Shared Informer 可以使<strong>同一类资源 Informer 共享一个 Reflector</strong>，这样可以节约很多资源。<strong>通过 map 数据结构实现共享的 Informer 机制</strong>。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>sharedInformerFactory</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>informers</span> <span class=kd>map</span><span class=p>[</span><span class=nx>reflect</span><span class=p>.</span><span class=nx>Type</span><span class=p>]</span> <span class=nx>cache</span><span class=p>.</span><span class=nx>SharedIndexInformer</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>InformerFor</code> 函数可以添加不同资源的 Informer，如果已经存在同类型的资源 Informer，则返回当前 Informer。</p><h4 id=reflector>Reflector</h4><p><img src=/images/informer%e6%9e%b6%e6%9e%84.png loading=lazy></p><p>Reflector 负责与 apiserver 建立连接，使用 <code>ListAndWatch</code> 的方法获取资源对象的增量更新。</p><p>Reflector 源码实现中最主要的是 <code>ListerAndWatch</code> 函数，它可以分成两部分：<strong>获取资源列表数据</strong>和<strong>监控资源对象</strong>。</p><p><strong>1. 获取资源列表数据</strong></p><p>List 流程：</p><p><img src=/images/List%e6%b5%81%e7%a8%8b.png loading=lazy></p><ul><li>首次连接时会先从 apiserver 中 list 该资源的所有实例，<code>list</code> 会拿到该对象最新的 resourceVersion，然后使用 <code>watch</code> 方法监听该 resourceVersion 之后的所有变化</li></ul><p><strong>2. 监控资源对象</strong></p><ul><li>若监听中途出现异常，Reflector 在重连时会携带上个版本的 rsourceVersion，并从该 resourceVersion 增量更新，避免再次全量 List。</li><li>一旦该对象的实例有 Add、Delete、Update 动作，Reflector 都会收到 “事件通知”，这时，该事件与对应的 API 对象这个组合，被称为<strong>增量（Delta）</strong>，它会被放进 DeltaFIFO 中。</li></ul><h4 id=deltafifo>DeltaFIFO</h4><p><strong>DeltaFIFO负责管理资源对象的增量变化通知和提供增量同步的功能。</strong></p><p>DeltaFIFO 可以分开理解：</p><ol><li>FIFO 是一个先进先出的队列。</li><li>Delta 是一个资源对象存储，可以保存资源对象的操作类型。</li></ol><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>DeltaFIFO</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>items</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span> <span class=nx>Deltas</span>
+</span></span><span class=line><span class=cl>    <span class=nx>queue</span> <span class=p>[]</span><span class=kt>string</span>  <span class=c1>// 存储资源对象的 key，通过 `KeyOf` 函数计算得到
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Deltas</span> <span class=p>[]</span><span class=nx>Delta</span>
+</span></span></code></pre></td></tr></table></div></div><p>DeltaFIFO 与其他队列最大的不同之处是，<strong>它会保留所有关于资源对象（obj）的操作类型</strong>，队列中会存在拥有不同操作类型的同一个资源对象，<strong>消费者在处理该资源对象时能够了解该资源对象所发生的事情</strong>。</p><p><img src=/images/DeltaFIFO.png loading=lazy></p><p>DeltaFIFO 本质上是个先进先出队列，有生产者和消费者，生产者是 Reflector 调用的 <code>Add</code> 方法，消费者是 Controller 调用的 <code>Pop</code> 方法。</p><p><strong>1. 生产者方法</strong></p><p>DeltaFIFO 队列中的资源对象在 Added 事件、Updated 事件、Delete 事件中都调用了 <a class=link href=https://github.com/kubernetes/client-go/blob/5a0a4247921dd9e72d158aaa6c1ee124aba1da80/tools/cache/delta_fifo.go#L442 target=_blank rel=noopener><code>queueActionLocked</code> 函数</a>：</p><ul><li>首先通过 <code>KeyOf</code> 函数计算出资源对象的 Key。</li><li>将 actionType 和资源对象构造成 Delta，添加到 items 中，并去重。</li><li>更新构造后的 Delta 并通过 <code>cond.Broadcast</code> 通知所有消费者解除阻塞。</li></ul><p><strong>2. 消费者方法</strong></p><p><code>Pop</code> 方法作为消费者方法使用，它的入参 process 是用于接收并处理对象的回调方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>f</span> <span class=o>*</span><span class=nx>DeltaFIFO</span><span class=p>)</span> <span class=nf>Pop</span><span class=p>(</span><span class=nx>process</span> <span class=nx>PopProcessFunc</span><span class=p>)</span> <span class=p>(</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>f</span><span class=p>.</span><span class=nx>lock</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>f</span><span class=p>.</span><span class=nx>lock</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=nb>len</span><span class=p>(</span><span class=nx>f</span><span class=p>.</span><span class=nx>queue</span><span class=p>)</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=c1>//阻塞 直到调用了f.cond.Broadcast()
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=nx>f</span><span class=p>.</span><span class=nx>cond</span><span class=p>.</span><span class=nf>Wait</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//取出第一个元素
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>id</span> <span class=o>:=</span> <span class=nx>f</span><span class=p>.</span><span class=nx>queue</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=nx>f</span><span class=p>.</span><span class=nx>queue</span> <span class=p>=</span> <span class=nx>f</span><span class=p>.</span><span class=nx>queue</span><span class=p>[</span><span class=mi>1</span><span class=p>:]</span>
+</span></span><span class=line><span class=cl>        <span class=o>...</span>
+</span></span><span class=line><span class=cl>        <span class=nx>item</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>f</span><span class=p>.</span><span class=nx>items</span><span class=p>[</span><span class=nx>id</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>        <span class=o>...</span>
+</span></span><span class=line><span class=cl>        <span class=nb>delete</span><span class=p>(</span><span class=nx>f</span><span class=p>.</span><span class=nx>items</span><span class=p>,</span> <span class=nx>id</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//这个process可以在controller.go中的processLoop()找到
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>//初始化是在shared_informer.go的Run
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=c1>//最终执行到shared_informer.go的HandleDeltas方法
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=nx>err</span> <span class=o>:=</span> <span class=nf>process</span><span class=p>(</span><span class=nx>item</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=c1>//如果处理出错了重新放回队列中
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>if</span> <span class=nx>e</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>err</span><span class=p>.(</span><span class=nx>ErrRequeue</span><span class=p>);</span> <span class=nx>ok</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=nx>f</span><span class=p>.</span><span class=nf>addIfNotPresent</span><span class=p>(</span><span class=nx>id</span><span class=p>,</span> <span class=nx>item</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nx>err</span> <span class=p>=</span> <span class=nx>e</span><span class=p>.</span><span class=nx>Err</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li>当队列中没有数据时，通过 <code>f.cond.wait</code> 阻塞等待数据，直到收到 <code>cond.Broadcast</code> 才解除阻塞。</li><li>如果队列不为空，取队头数据，将该对象传入 <code>process</code> 函数，由上层消费者进行处理。若 <code>process</code> 回调函数处理出错，则重新入队。</li></ul><p>所以整体流程如图：</p><p><img src=/images/%e7%94%9f%e4%ba%a7%e6%b6%88%e8%b4%b9.png loading=lazy alt="Alt text"></p><p>将对象存储至 Indexer 后，将资源对象分发到 SharedInformer 对应的事件处理函数，在 Informer 中我们通过 <code>informer.AddEventHandler</code> 添加了对资源事件的处理函数。<a class=link href=https://github.com/PyPotato/client-go-demo/blob/master/informerDemo/main.go target=_blank rel=noopener>可以看个例子</a></p><p><strong>3. Resync 机制</strong></p><p><strong>为什么需要 Resync？</strong></p><p>首先回顾 Informer 的架构图，一共有三方需要同步数据</p><p><img src=/images/informer%e6%9e%b6%e6%9e%84.png loading=lazy></p><ul><li>首先是 <strong>apiserver</strong> 与 <strong>Informer</strong> 之间通过 resourceVersion 保证数据的一致性。</li><li>然后是 <strong>Informer</strong> 和 <strong>controller</strong> 之间：协程将 FIFO 队列中的事件取出更新至 Indexer 后，还会将事件同步回调至 custom controller，加入到 workqueue 队列中。</li></ul><p><strong>但是在处理 Informer 事件回调时，并不关心其返回的结果</strong>:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// Informer 的 Pop 方法的回调函数最后会调用到这个函数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>processDeltas</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>	<span class=c1>// Object which receives event notifications from the given deltas
+</span></span></span><span class=line><span class=cl><span class=c1></span>	<span class=nx>handler</span> <span class=nx>ResourceEventHandler</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>clientState</span> <span class=nx>Store</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>deltas</span> <span class=nx>Deltas</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>	<span class=nx>isInInitialList</span> <span class=kt>bool</span><span class=p>,</span>
+</span></span><span class=line><span class=cl><span class=p>)</span> <span class=kt>error</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// from oldest to newest
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>d</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>deltas</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>obj</span> <span class=o>:=</span> <span class=nx>d</span><span class=p>.</span><span class=nx>Object</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>switch</span> <span class=nx>d</span><span class=p>.</span><span class=nx>Type</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nx>Sync</span><span class=p>,</span> <span class=nx>Replaced</span><span class=p>,</span> <span class=nx>Added</span><span class=p>,</span> <span class=nx>Updated</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=c1>//查一下是否在Indexer缓存中 如果在缓存中就更新缓存中的对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=k>if</span> <span class=nx>old</span><span class=p>,</span> <span class=nx>exists</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>clientState</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>obj</span><span class=p>);</span> <span class=nx>err</span> <span class=o>==</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>exists</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>clientState</span><span class=p>.</span><span class=nf>Update</span><span class=p>(</span><span class=nx>obj</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=nx>handler</span><span class=p>.</span><span class=nf>OnUpdate</span><span class=p>(</span><span class=nx>old</span><span class=p>,</span> <span class=nx>obj</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                <span class=c1>//没有在Indexer缓存中 把对象插入到缓存中
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=k>if</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>clientState</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>obj</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>                    <span class=k>return</span> <span class=nx>err</span>
+</span></span><span class=line><span class=cl>                <span class=p>}</span>
+</span></span><span class=line><span class=cl>                <span class=nx>handler</span><span class=p>.</span><span class=nf>OnAdd</span><span class=p>(</span><span class=nx>obj</span><span class=p>,</span> <span class=nx>isInInitialList</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=o>...</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>当出现处理失败的情况时，<strong>定时的 Resync 让这些处理失败的事件有了重新 onUpdate 处理的机会</strong></p><p><strong>Resync 做了什么？</strong></p><p>Resync 的逻辑非常简单，就是定时将本地缓存（Indexer）中所有的资源对象重新推送到 DeltaFIFO 中，并设定操作类型为 Sync。</p><p><strong>4. SharedInformer 消费 Deltas</strong></p><p>主要看回调函数 <code>processDeltas</code>（见👆）</p><h4 id=indexer>Indexer</h4><p><strong>Indexer 负责存储资源对象的完整副本和提供查询功能</strong>，用于减轻 API Server 和 Etcd 的压力。</p><p>Indexer 是在 ThreadSafeMap 的基础上进行了封装，它继承了 ThreadSafeMap 的相关方法，并实现了 Indexer Func 等功能 —— 提供了索引功能。</p><p><img src=/images/Indexer%e5%ad%98%e5%82%a8%e7%bb%93%e6%9e%84.png loading=lazy></p><p><strong>1. ThreadSafeMap 并发安全存储</strong></p><p>TreadSafeMap 结构如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>threadSafeMap</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>item</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span> <span class=kd>interface</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>item 的 key 通过 keyFunc 函数计算，默认使用 <code>MetaNamespaceKeyFunc</code> 函数计算出 <code>&lt;namespace>/&lt;name></code> 格式的 key，value 用于存储资源对象。</p><p><strong>2. Indexer 索引器</strong></p><p>Indexer 可以<strong>自定义索引函数</strong>，它有 4 个重要数据结构：Indices、Index、Indexers 和 IndexFunc。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Indexers</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=nx>IndexFunc</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>IndexFunc</span> <span class=kd>func</span><span class=p>(</span><span class=nx>obj</span> <span class=kd>interface</span><span class=p>{})</span> <span class=p>([]</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>indices</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=nx>Index</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>index</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=nx>sets</span><span class=p>.</span><span class=nx>String</span>
+</span></span></code></pre></td></tr></table></div></div><ul><li><strong>Indexers</strong>：存储索引器，key 为索引器名称，value 为索引器的实现函数。</li><li><strong>IndexFunc</strong>：索引器函数，定义为接收一个资源对象，返回检索结果列表。</li><li><strong>Indices</strong>：存储缓存器，key 为缓存器名称，value 为缓存数据。</li><li><strong>Index</strong>：存储缓存数据，其结构为 K/V。</li></ul><p>可以先来看一个自定义索引的例子：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kn>package</span> <span class=nx>main</span>
+</span></span><span class=line><span class=cl><span class=c1>// 导入包
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kn>import</span> <span class=p>(</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;fmt&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;strings&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/api/core/v1&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=nx>metav1</span> <span class=s>&#34;k8s.io/apimachinery/pkg/apis/meta/v1&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=s>&#34;k8s.io/client-go/tools/cache&#34;</span>
+</span></span><span class=line><span class=cl><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 定义一个函数，用于根据 Pod 对象的 annotations 字段中的 users 属性，生成一个包含所有用户名的字符串切片
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>UsersIndexFunc</span><span class=p>(</span><span class=nx>obj</span> <span class=kd>interface</span><span class=p>{})</span> <span class=p>([]</span><span class=kt>string</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 获取 Pod 对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>pod</span> <span class=o>:=</span> <span class=nx>obj</span><span class=p>.(</span><span class=o>*</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>Pod</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 获取 users 属性
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>usersString</span> <span class=o>:=</span> <span class=nx>pod</span><span class=p>.</span><span class=nx>Annotations</span><span class=p>[</span><span class=s>&#34;users&#34;</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 将 users 属性分割为字符串切片
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>return</span> <span class=nx>strings</span><span class=p>.</span><span class=nf>Split</span><span class=p>(</span><span class=nx>usersString</span><span class=p>,</span> <span class=s>&#34;,&#34;</span><span class=p>),</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 主函数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 根据 UsersIndexFunc 建立相应的索引结构
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>index</span> <span class=o>:=</span> <span class=nx>cache</span><span class=p>.</span><span class=nf>NewIndexer</span><span class=p>(</span><span class=nx>cache</span><span class=p>.</span><span class=nx>MetaNamespaceKeyFunc</span><span class=p>,</span> <span class=nx>cache</span><span class=p>.</span><span class=nx>Indexers</span><span class=p>{</span><span class=s>&#34;byUser&#34;</span><span class=p>:</span> <span class=nx>UsersIndexFunc</span><span class=p>})</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 创建三个 Pod 对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>pod1</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>Pod</span><span class=p>{</span><span class=nx>ObjectMeta</span><span class=p>:</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>ObjectMeta</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&#34;one&#34;</span><span class=p>,</span> <span class=nx>Annotations</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;users&#34;</span><span class=p>:</span> <span class=s>&#34;ernie,bert&#34;</span><span class=p>}}}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>pod2</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>Pod</span><span class=p>{</span><span class=nx>ObjectMeta</span><span class=p>:</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>ObjectMeta</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&#34;two&#34;</span><span class=p>,</span> <span class=nx>Annotations</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;users&#34;</span><span class=p>:</span> <span class=s>&#34;bert,oscar&#34;</span><span class=p>}}}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>pod3</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>Pod</span><span class=p>{</span><span class=nx>ObjectMeta</span><span class=p>:</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>ObjectMeta</span><span class=p>{</span><span class=nx>Name</span><span class=p>:</span> <span class=s>&#34;tre&#34;</span><span class=p>,</span> <span class=nx>Annotations</span><span class=p>:</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;users&#34;</span><span class=p>:</span> <span class=s>&#34;ernie,elmo&#34;</span><span class=p>}}}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 将 Pod 对象添加到 cache.Indexer 对象中
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>index</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>pod1</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>index</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>pod2</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nx>index</span><span class=p>.</span><span class=nf>Add</span><span class=p>(</span><span class=nx>pod3</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 从刚刚构建的索引结构中，获取所有包含用户名为 &#34;ernie&#34; 的 Pod 对象
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>erniePods</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>index</span><span class=p>.</span><span class=nf>ByIndex</span><span class=p>(</span><span class=s>&#34;byUser&#34;</span><span class=p>,</span> <span class=s>&#34;ernie&#34;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nb>panic</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 遍历所有包含用户名为 &#34;ernie&#34; 的 Pod 对象，并打印其名称
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>erniePod</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>erniePods</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>erniePod</span><span class=p>.(</span><span class=o>*</span><span class=nx>metav1</span><span class=p>.</span><span class=nx>Pod</span><span class=p>).</span><span class=nx>Name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 输出
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nx>one</span>
+</span></span><span class=line><span class=cl><span class=nx>tre</span>
+</span></span></code></pre></td></tr></table></div></div><p>上面的代码首先定义了一个索引器函数 <code>UserIndexFunc</code>，在该函数中，我们定义查询出所有 Pod 资源下 Annotations 字段的 key 为 users 的 Pod。</p><p>cache.NewIndexer 函数实例化了 Indexer 对象，它接收两个参数：第一个是 KeyFunc，用于计算资源对象的 key；第二个是 cache.Indexers，用于定义索引器，其中 key 为索引器的名称（byUser），value 为索引器。通过 index.Add 函数添加 3 个 Pod 资源对象。最后通过 index.ByIndex 函数查询 byUser 索引器下匹配 ernie 字段的 Pod 列表。</p><p><strong>所以 Indexer 中的 4 个结构之间的协同关系如下：</strong></p><ul><li>根据自定义索引函数建立索引结构</li><li>通过 Add 方法将资源对象加入这个索引结构</li><li>利用该索引结构提供的索引方法获取满足条件的资源对象的 key</li><li>用这个 key 到真正存储的地方获取资源对象</li></ul><p><img src=/images/index%e6%b5%81%e7%a8%8b.png loading=lazy alt="Alt text"></p><p><strong>3. 索引器核心实现</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>threadSafeMap</span><span class=p>)</span> <span class=nf>ByIndex</span><span class=p>(</span><span class=nx>indexName</span><span class=p>,</span> <span class=nx>indexKey</span> <span class=kt>string</span><span class=p>)</span> <span class=p>([]</span><span class=kd>interface</span><span class=p>{},</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>indexFunc</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>indexers</span><span class=p>[</span><span class=nx>indexName</span><span class=p>]</span>  <span class=c1>// 查找索引名对应的索引函数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>index</span> <span class=o>:=</span> <span class=nx>c</span><span class=p>.</span><span class=nx>indices</span><span class=p>[</span><span class=nx>indexName</span><span class=p>]</span>   <span class=c1>// 查找索引名对应的缓存器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>set</span> <span class=o>:=</span> <span class=nx>index</span><span class=p>[</span><span class=nx>indexKey</span><span class=p>]</span>  <span class=c1>// 从 index 中获取对应的数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>list</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kd>interface</span><span class=p>{},</span> <span class=mi>0</span><span class=p>,</span> <span class=nx>set</span><span class=p>.</span><span class=nf>Len</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=nx>key</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>set</span><span class=p>.</span><span class=nf>List</span><span class=p>()</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nx>list</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>list</span><span class=p>,</span> <span class=nx>c</span><span class=p>.</span><span class=nx>items</span><span class=p>[</span><span class=nx>key</span><span class=p>])</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>list</span><span class=p>,</span> <span class=kc>nil</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>Index 缓存数据为集合（元素不重复）。由于 Go 标准库没有提供 Set 数据结构，而 Go 中 map 是不能存在相同的 key 的，因此 Kubernetes 将 map 结构类型的 key 作为 Set 数据结构，实现去重特性。</p></blockquote><h3 id=workqueue>WorkQueue</h3><p><strong>Event 产生的速度比处理 Event 的速度快，WorkQueue就是为了解决这种速度不一致的问题而引入的</strong></p><p><img src=/images/informer%e6%9e%b6%e6%9e%84.png loading=lazy alt="Alt text"></p><p>WorkQueue 相比普通的 FIFO 相比支持：</p><ul><li>有序：按添加顺序处理元素。</li><li>去重：相同元素在同一时间不会被重复处理。</li><li>并发性：多生产者、消费者。</li><li>标记机制：支持标记，标记一个元素是否被处理，允许元素在处理时重新排队。</li><li>通知机制：ShutDown 方法通过信号量通知队列不再接收新元素。</li><li>延迟：支持延迟队列，延迟一段时间后再进将元素入队。</li><li>限速：支持限速队列，限制一个元素被重新排队的速率。</li><li>Metric：支持 metric 监控指标，用于 Prometheus 监控。</li></ul><p>WorkQueue 支持 3 种队列，提供 3 种接口：</p><ul><li><strong>Interface</strong>：FIFO 队列接口，支持去重。</li><li><strong>DelayInterface</strong>：延迟队列接口，基于 Interface 封装。</li><li><strong>RatelimitingInterface</strong>：限速队列接口，基于 DelayInterface 封装。</li></ul><h4 id=fifo-队列>FIFO 队列</h4><p>方法说明：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Interface</span> <span class=kd>interface</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>Add</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{})</span>   <span class=c1>// 给队列添加元素，类型任意
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>Len</span><span class=p>()</span> <span class=kt>int</span>
+</span></span><span class=line><span class=cl>    <span class=nf>Get</span><span class=p>()</span> <span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{},</span> <span class=nx>shutdown</span> <span class=kt>bool</span><span class=p>)</span>     <span class=c1>// 获取队头元素
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>Done</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{})</span>  <span class=c1>// 标记元素已被处理
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>ShutDown</span><span class=p>()</span>  <span class=c1>// 关闭队列
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>ShuttingDown</span><span class=p>()</span> <span class=kt>bool</span> <span class=c1>// 查询队列是否正在被关闭
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>FIFO 数据结构定义：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>Type</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>queue</span> <span class=p>[]</span><span class=nx>t</span>   <span class=c1>// 实际存储元素的地方
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>dirty</span> <span class=nx>set</span>   <span class=c1>// 保证去重，并且保证同一个元素被并发添加多次，也只会被处理一次
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>processing</span> <span class=nx>set</span>  <span class=c1>// 标记一个元素是否被正常处理
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nx>cond</span> <span class=o>*</span><span class=nx>sync</span><span class=p>.</span><span class=nx>Cond</span>
+</span></span><span class=line><span class=cl>    <span class=nx>shuttingDown</span> <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>    <span class=nx>metrics</span> <span class=nx>queueMetrics</span>
+</span></span><span class=line><span class=cl>    <span class=nx>unfinishedWorkUpdatePeriod</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Duration</span>
+</span></span><span class=line><span class=cl>    <span class=nx>clock</span> <span class=nx>clock</span><span class=p>.</span><span class=nx>Clock</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>存储过程如图：</p><p><img src=/images/%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b.png loading=lazy alt="Alt text"></p><ul><li>通过 Add 方法往 FIFO 中插入三个元素。</li><li>通过 Get 方法获取最先进入的元素，放入 processing 队列。</li><li>通过 Done 方法标记该元素已经被处理完成，并从 processing 队列中出队。</li></ul><p>FIFO 并发存储过程：</p><p><img src=/images/%e5%b9%b6%e5%8f%91%e5%ad%98%e5%82%a8%e8%bf%87%e7%a8%8b.png loading=lazy alt="Alt text"></p><ul><li>goroutine A 通过 Get 获取队列 1 元素，将其添加到 processing 队列。</li><li>同一时间，goroutine B 通过 Add 方法插入另一个 1 元素。</li><li>此时由于在 processing 队列已经存在相同的元素，所以后面的 1 元素不会直接添加到 queue 字段中，而是添加到 dirty。</li><li>当 goroutine A 通过 Done 标记处理完成后，如果 dirty 字段中有 1 元素，则将其追加到 queue 字段尾部。</li></ul><h4 id=延迟队列>延迟队列</h4><p>延迟队列基于 FIFO 队列接口，新增了 <code>AddAfter</code> 方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>DelayingInterface</span> <span class=kd>interface</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Interface</span>
+</span></span><span class=line><span class=cl>    <span class=nf>AddAfter</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{},</span> <span class=nx>duration</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Duration</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>delayingType</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Interface</span>
+</span></span><span class=line><span class=cl>    <span class=nx>clock</span> <span class=nx>clock</span><span class=p>.</span><span class=nx>Clock</span>
+</span></span><span class=line><span class=cl>    <span class=nx>stopCh</span> <span class=kd>chan</span> <span class=kd>struct</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>heartbeat</span> <span class=nx>clock</span><span class=p>.</span><span class=nx>Ticker</span>
+</span></span><span class=line><span class=cl>    <span class=nx>waitingForAddCh</span> <span class=kd>chan</span> <span class=o>*</span><span class=nx>waitFor</span>   <span class=c1>// waitchan 默认大小 1000
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nx>metrics</span>          <span class=nx>retryMetrics</span>
+</span></span><span class=line><span class=cl>    <span class=nx>deprecatedMetrics</span> <span class=nx>retryMetrics</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kd>type</span> <span class=nx>waitFor</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>   <span class=nx>data</span>    <span class=nx>t</span>          <span class=c1>// 准备添加到队列中的数据
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=nx>readyAt</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Time</span>  <span class=c1>// 应该被加入队列的时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>   <span class=nx>index</span> <span class=kt>int</span>          <span class=c1>// 在 waitForPriorityQueue（小顶堆）中的索引
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中最主要的字段是 <code>waitingForAddCh</code> ，默认大小 1000。</p><p>延迟队列通过 <code>AddAfter</code> 方法插入元素，当插入的元素大小大于等于 1000 时，延迟队列阻塞。运行原理：</p><p><img src=/images/%e5%bb%b6%e8%bf%9f%e9%98%9f%e5%88%97%e8%bf%90%e8%a1%8c%e5%8e%9f%e7%90%86.png loading=lazy alt="Alt text"></p><blockquote><p>通过 AddAfter 将元素加入 waitingForAddCh，waitingLoop 来消费元素。当元素的延迟时间未到达时，则将元素放入按延迟时间排序的优先队列（waitForPriorityQueue）中。当元素延迟时间到达时，将元素插入 FIFO 队列，并遍历优先队列，按上述逻辑验证时间。</p></blockquote><h4 id=限速队列>限速队列</h4><p>基于延迟队列和 FIFO 队列接口封装，在原有的功能上增加了 <code>AddRateLimited</code>、<code>Forget</code>、<code>NumRequeues</code> 方法。</p><p>限速队列的重点在于它提供的 4 种限速算法接口（RateLimiter）。它的原理是<strong>利用延迟队列的特性，延迟某个元素的插入时间，达到限速目的</strong>。</p><p>限速队列接口方法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>RateLimiter</span> <span class=kd>interface</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>When</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{})</span> <span class=nx>time</span><span class=p>.</span><span class=nx>Duration</span>    <span class=c1>// 获取指定元素应该等待的时间
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>Forget</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{})</span>    <span class=c1>// 释放指定元素，清空该元素的排队数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>NumRequeues</span><span class=p>(</span><span class=nx>item</span> <span class=kd>interface</span><span class=p>{})</span> <span class=kt>int</span>   <span class=c1>// 获取指定元素的排队数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><blockquote><p>引入一个概念 —— <strong>限速周期</strong>：从执行 <code>AddRateLimited</code> 方法到执行完 <code>Forget</code> 方法之间的时间。</p></blockquote><p><strong>1. 令牌桶算法</strong></p><p><img src=/images/%e4%bb%a4%e7%89%8c%e6%a1%b6%e7%ae%97%e6%b3%95.png loading=lazy alt="Alt text"></p><p>通过 Go 三方库 <code>golang.org/x/time/rate</code> 实现。令牌桶算法内部实现了一个存放 token 的桶，初始桶为空，token 会以固定速率往桶里填充，直到填满，多余的 token
+会被丢弃。每个元素都会从令牌桶中得到一个 token，只有得到 token 的元素才能被 accept，否则处于等待状态。<strong>即通过控制发放 token 的速率达到限速目的</strong>。</p><p><strong>2. 排队指数算法</strong></p><p>排队指数算法将相同元素的排队数作为指数，排队数增大，速率限制呈指数级增长，但其最大不会超过 <code>maxDelay</code>。核心实现：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>exp</span> <span class=o>:=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span>
+</span></span><span class=line><span class=cl><span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span> <span class=p>=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=nx>backoff</span> <span class=o>:=</span> <span class=nb>float64</span><span class=p>(</span><span class=nx>r</span><span class=p>.</span><span class=nx>baseDelay</span><span class=p>.</span><span class=nf>Nanoseconds</span><span class=p>())</span> <span class=o>*</span> <span class=nx>math</span><span class=p>.</span><span class=nf>Pow</span><span class=p>(</span><span class=mi>2</span><span class=p>,</span> <span class=nb>float64</span><span class=p>(</span><span class=nx>exp</span><span class=p>))</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=nx>backoff</span> <span class=p>&gt;</span> <span class=nx>math</span><span class=p>.</span><span class=nx>MaxInt64</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>r</span><span class=p>.</span><span class=nx>maxDelay</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>其中，<code>failures</code> 用于统计元素排队数，每当 <code>AddRateLimited</code> 插入新元素，该字段加 1；<code>baseDelay</code> 是最初限速（系数，默认 5 ms），<code>maxDelay</code> 是最大限速单位（默认 1000 s）。
+延迟时间的计算公式可以总结为：$back off = baseDeley * 2^{\exp}$，其中 exp 为排队数。</p><p><strong>3. 计数器算法</strong></p><p>通过 <strong>限制一段时间内允许通过元素数</strong> 达到限速目的。每插入一个元素，计数器加 1，当计数器到达阈值并且还在限速周期内时，则不允许元素通过。WorkQueue 在此基础上扩展了两种延迟速率：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span> <span class=p>=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span> <span class=o>+</span> <span class=mi>1</span>
+</span></span><span class=line><span class=cl><span class=k>if</span> <span class=nx>r</span><span class=p>.</span><span class=nx>failures</span><span class=p>[</span><span class=nx>item</span><span class=p>]</span> <span class=o>&lt;=</span> <span class=nx>r</span><span class=p>.</span><span class=nx>maxFastAttempts</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nx>fastDelay</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=k>return</span> <span class=nx>slowDelay</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>4. 混合模式</strong></p><p>将多种限速算法混合使用，如同时使用排队指数算法和令牌桶算法：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=nf>DefaultControllerRateLimiter</span><span class=p>()</span> <span class=nx>RateLimiter</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=nf>NewMaxOfRateLimiter</span><span class=p>(</span>
+</span></span><span class=line><span class=cl>        <span class=nf>NewItemExponentialFailureRateLimiter</span><span class=p>(</span><span class=mi>5</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Millisecond</span><span class=p>,</span> <span class=mi>1000</span><span class=o>*</span><span class=nx>time</span><span class=p>.</span><span class=nx>Second</span><span class=p>),</span>
+</span></span><span class=line><span class=cl>        <span class=o>&amp;</span><span class=nx>BucketRateLimiter</span><span class=p>{</span><span class=nx>limiter</span><span class=p>:</span> <span class=nx>rate</span><span class=p>.</span><span class=nf>NewLimiter</span><span class=p>(</span><span class=nx>rate</span><span class=p>.</span><span class=nf>Limit</span><span class=p>(</span><span class=mi>10</span><span class=p>),</span> <span class=mi>100</span><span class=p>)},</span>
+</span></span><span class=line><span class=cl>    <span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=eventbroadcaster-事件管理器>EventBroadcaster 事件管理器</h3><blockquote><p>这里的 Event 是 Kubernetes 所管理的 Event 资源对象，而非 Etcd 集群监控机制产生的回调事件，注意区分。</p></blockquote><p>Event 作为一种集群资源保存在 Etcd 中，为了避免磁盘空间被填满，只保留最近 1 小时的事件。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// Event 数据结构定义
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>type</span> <span class=nx>Event</span> <span class=kd>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>metav1</span><span class=p>.</span><span class=nx>TypeMeta</span>
+</span></span><span class=line><span class=cl>    <span class=nx>metav1</span><span class=p>.</span><span class=nx>ObjectMeta</span>
+</span></span><span class=line><span class=cl>    <span class=nx>InvolvedObject</span> <span class=nx>ObjectReference</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Reason</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Message</span> <span class=kt>string</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Source</span> <span class=nx>EventSource</span>
+</span></span><span class=line><span class=cl>    <span class=nx>FirstTimestamp</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>Time</span>
+</span></span><span class=line><span class=cl>    <span class=nx>LastTimestamp</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>Time</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Count</span> <span class=kt>int32</span>
+</span></span><span class=line><span class=cl>    <span class=nx>Type</span> <span class=kt>string</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>EventTime</span> <span class=nx>metav1</span><span class=p>.</span><span class=nx>MicroTime</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>Series</span> <span class=o>*</span><span class=nx>EventSeries</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>Action</span> <span class=kt>string</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>Related</span> <span class=o>*</span><span class=nx>ObjectReference</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>ReportingController</span> <span class=kt>string</span> 
+</span></span><span class=line><span class=cl>    <span class=nx>ReportingInstance</span> <span class=kt>string</span> 
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>EventBroadcaster 事件管理机制原理图：</p><p><img src=/images/EventBroadcaster%e5%8e%9f%e7%90%86%e5%9b%be.png loading=lazy alt="Alt text"></p><p>在定位上，可以把 EventBroadcaster 理解成集成在各个组件中的一套 SDK，它可以用来产生和分发事件。其中主要有三个组件：</p><ul><li><strong>EventRecorder</strong>：事件生产者。Kubernetes 组件通过 EventRecorder 记录关键性事件。</li><li><strong>EventBroadcaster</strong>：事件消费者。消费 EventRecorder 记录的事件并分发给所有已连接的 broadcasterWatcher。有非阻塞分发和阻塞分发机制。</li><li><strong>broadcasterWatcher</strong>：用于定义事件的处理方式，如上报到 API Server。</li></ul><p><strong>1. EventRecorder</strong></p><p>EventRecorder 接口方法以及使用示例如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>type</span> <span class=nx>EventRecorder</span> <span class=kd>interface</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>Event</span><span class=p>(</span><span class=o>...</span><span class=p>)</span>  <span class=c1>// 记录刚发生的事件
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>Eventf</span><span class=p>(</span><span class=o>...</span><span class=p>)</span> <span class=c1>// 格式化输出事件的格式
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>PastEventf</span><span class=p>(</span><span class=o>...</span><span class=p>)</span> <span class=c1>// 允许自定义事件发生的事件，以记录已发生过的消息
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>AnnotatedEventf</span><span class=p>(</span><span class=o>...</span><span class=p>)</span>    <span class=c1>// 功能与 Eventf 一样，添加了 Annotation 字段
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// Event 最终会调用到 Action 函数异步地将事件写入 m.incoming Chan。
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Broadcaster</span><span class=p>)</span> <span class=nf>Action</span><span class=p>(</span><span class=nx>action</span> <span class=nx>EventType</span><span class=p>,</span> <span class=nx>obj</span> <span class=nx>runtime</span><span class=p>.</span><span class=nx>Object</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>m</span><span class=p>.</span><span class=nx>incoming</span> <span class=o>&lt;-</span> <span class=nx>Event</span><span class=p>{</span><span class=nx>action</span><span class=p>,</span> <span class=nx>obj</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><strong>2. EventBroadcaster</strong></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=c1>// EventBroadcaster 实例化示例
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=kd>func</span> <span class=nf>NewBroadcaster</span><span class=p>()</span> <span class=nx>EventBroadcaster</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=o>&amp;</span><span class=nx>eventBroadcasterImpl</span><span class=p>{</span><span class=nx>watch</span><span class=p>.</span><span class=nf>NewBroadcaster</span><span class=p>(</span><span class=nx>maxQueuedEvents</span><span class=p>,</span> <span class=nx>watch</span><span class=p>.</span><span class=nx>DropIfChannelFull</span><span class=p>),</span> <span class=nx>defaultSleepDuration</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p><code>watch.NewBroadcaster</code> 会在函数内部启动 goroutine 监控 m.incoming，并将监控的事件通过 <code>m.distribute</code> 函数分发给所有已连接的 broadcasterWatcher。</p><p>分发有两种机制：<strong>非阻塞分发机制</strong> 和 <strong>阻塞分发机制</strong>。其中，非阻塞分发用 <code>DropIfChannelFull</code> 标识，阻塞分发用 <code>WaitIfChannelFull</code> 标识，默认为非阻塞，示例代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>m</span> <span class=o>*</span><span class=nx>Broadcaster</span><span class=p>)</span> <span class=nf>distribute</span><span class=p>(</span><span class=nx>event</span> <span class=nx>Event</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>m</span><span class=p>.</span><span class=nx>lock</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>defer</span> <span class=nx>m</span><span class=p>.</span><span class=nx>lock</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=nx>m</span><span class=p>.</span><span class=nx>fullChannelBehavior</span> <span class=o>==</span> <span class=nx>DropIfChannelFull</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>w</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>m</span><span class=p>.</span><span class=nx>watchers</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nx>w</span><span class=p>.</span><span class=nx>result</span> <span class=o>&lt;-</span> <span class=nx>event</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>w</span><span class=p>.</span><span class=nx>stopped</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>default</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>w</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>m</span><span class=p>.</span><span class=nx>watchers</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>select</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nx>w</span><span class=p>.</span><span class=nx>result</span> <span class=o>&lt;-</span> <span class=nx>event</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=o>&lt;-</span><span class=nx>w</span><span class=p>.</span><span class=nx>stopped</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>非阻塞使用 select 中的 default 关键字实现，当缓冲区满时，事件丢失。而阻塞方式在缓冲区满时会选择等待。</p><blockquote><p>Kubernetes 中的事件资源与其他资源不同的是它可以丢失。</p></blockquote><p><strong>3. broadcasterWatcher</strong></p><p>broadcasterWatcher 是每个系统组件自定义处理事件的方式。每个 broadcasterWatcher 有两种自定义处理事件的函数：</p><ul><li><strong>StartLogging</strong>：将事件写入日志。</li><li><strong>StartRecordingToSink</strong>：将事件上报到 API Server 并存到 Etcd。</li></ul><p>上面这两个函数都依赖于 <code>StartEventWatcher</code> 函数，其内部跑了一个 goroutine，不断监控 EventBroadcaster 来发现事件并调用相关函数对事件处理。</p><p>以 kube-scheduler 组件为例：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=k>if</span> <span class=nx>cc</span><span class=p>.</span><span class=nx>Broadcaster</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=o>&amp;&amp;</span> <span class=nx>cc</span><span class=p>.</span><span class=nx>EventClient</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nx>cc</span><span class=p>.</span><span class=nx>Broadcaster</span><span class=p>.</span><span class=nf>StartLogging</span><span class=p>(</span><span class=nx>klog</span><span class=p>.</span><span class=nf>V</span><span class=p>(</span><span class=mi>6</span><span class=p>).</span><span class=nf>Info</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>    <span class=nx>cc</span><span class=p>.</span><span class=nx>Broadcaster</span><span class=p>.</span><span class=nf>StartRecordingToSink</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>v1core</span><span class=p>.</span>
+</span></span><span class=line><span class=cl><span class=nx>EventSinkImpl</span><span class=p>{</span><span class=nx>Interface</span><span class=p>:</span> <span class=nx>cc</span><span class=p>.</span><span class=nx>EventClient</span><span class=p>.</span><span class=nf>Events</span><span class=p>(</span><span class=s>&#34;&#34;</span><span class=p>)})</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>它将 <code>v1core.EventSinkImpl</code> 作为上报事件的自定义函数。上报事件有 3 种方法：Create（Post 方法）、Update（Put 方法）、Patch（Patch 方法）。以 Create 为例，<code>Create</code> => <code>e.Interface.CreateWithEventNamespace</code>：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-go data-lang=go><span class=line><span class=cl><span class=kd>func</span> <span class=p>(</span><span class=nx>e</span> <span class=o>*</span><span class=nx>events</span><span class=p>)</span> <span class=nf>CreateWithEventNamespace</span><span class=p>(</span><span class=nx>event</span> <span class=o>*</span><span class=nx>v1</span><span class=p>.</span><span class=nx>Event</span><span class=p>)</span> <span class=p>(</span><span class=o>*</span><span class=nx>v1</span><span class=p>.</span><span class=nx>Event</span><span class=p>,</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=o>...</span>
+</span></span><span class=line><span class=cl>    <span class=nx>result</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>v1</span><span class=p>.</span><span class=nx>Event</span><span class=p>{}</span>
+</span></span><span class=line><span class=cl>    <span class=nx>err</span> <span class=o>:=</span> <span class=nx>e</span><span class=p>.</span><span class=nx>client</span><span class=p>.</span><span class=nf>Post</span><span class=p>().</span>
+</span></span><span class=line><span class=cl>        <span class=nf>NamespaceIfScoped</span><span class=p>(</span><span class=nx>event</span><span class=p>.</span><span class=nx>Namespace</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>event</span><span class=p>.</span><span class=nx>Namespace</span><span class=p>)</span> <span class=p>&gt;</span> <span class=mi>0</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Resource</span><span class=p>(</span><span class=s>&#34;events&#34;</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Body</span><span class=p>(</span><span class=nx>event</span><span class=p>).</span>
+</span></span><span class=line><span class=cl>        <span class=nf>Do</span><span class=p>().</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>上报过程通过 RESTClient 发送 Post 请求，将事件发送到 API Server，最终存在 Etcd。</p></section><footer class=article-footer><section class=article-copyright><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-copyright" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentcolor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z"/><circle cx="12" cy="12" r="9"/><path d="M14.5 9a3.5 4 0 100 6"/></svg><span>Licensed under CC BY-NC-SA 4.0</span></section></footer></article><div class=disqus-container><div id=disqus_thread></div><script>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//hugo-theme-stack.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></div><style>.disqus-container{background-color:var(--card-background);border-radius:var(--card-border-radius);box-shadow:var(--shadow-l1);padding:var(--card-padding)}</style><script>window.addEventListener("onColorSchemeChange",e=>{typeof DISQUS=="object"&&DISQUS.reset({reload:!0})})</script><footer class=site-footer><section class=copyright>&copy;
 2020 -
 2024 Example Person</section><section class=powerby>Built with <a href=https://gohugo.io/ target=_blank rel=noopener>Hugo</a><br>主题 <b><a href=https://github.com/CaiJimmy/hugo-theme-stack target=_blank rel=noopener data-version=3.21.0>Stack</a></b> 由 <a href=https://jimmycai.com target=_blank rel=noopener>Jimmy</a> 设计</section></footer><div class=pswp tabindex=-1 role=dialog aria-hidden=true><div class=pswp__bg></div><div class=pswp__scroll-wrap><div class=pswp__container><div class=pswp__item></div><div class=pswp__item></div><div class=pswp__item></div></div><div class="pswp__ui pswp__ui--hidden"><div class=pswp__top-bar><div class=pswp__counter></div><button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
 <button class="pswp__button pswp__button--share" title=Share></button>
